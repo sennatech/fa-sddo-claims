@@ -18,9 +18,8 @@ public class Coverage {
     @Column(nullable = false, length = 100)
     private String description;
 
-    // TODO: #2 Change property name to "Amount" in Coverages entity
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal value;
+    private BigDecimal amount;
 
     @Column(nullable = false, length = 50)
     private String name;
