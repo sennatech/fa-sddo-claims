@@ -21,9 +21,12 @@ public class Policy {
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
     private LocalDate validityEnd;
+
+    // TODO: #1 Change property name to "Amount"
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal value;
-    @OneToOne
+
+    @ManyToOne
     @JoinColumn(name = "holder_document", nullable = false)
     private Customer customer;
     @OneToOne
