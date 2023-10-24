@@ -22,9 +22,8 @@ public class Policy {
     @Column(nullable = false)
     private LocalDate validityEnd;
 
-    // TODO: #1 Change property name to "Amount"
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal value;
+    private BigDecimal amount;
 
     @ManyToOne
     @JoinColumn(name = "holder_document", nullable = false)
