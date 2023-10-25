@@ -5,12 +5,14 @@ import java.time.LocalDate;
 import jakarta.persistence.*;
 import br.com.sennatech.sddo.claims.domain.enums.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "claim")
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Claim {
@@ -25,8 +27,9 @@ public class Claim {
   @Column(nullable = false)
   private String description;
 
-  @Column(nullable = false, length = 20)
-  private String type;
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private Type type;
 
   @OneToOne
   @JoinColumn(name = "notifier_document", nullable = false)
@@ -36,9 +39,8 @@ public class Claim {
   @Column(nullable = false)
   private Status status;
 
-  @OneToOne
-  @JoinColumn(name = "coverage", nullable = false)
-  private Coverage coverage;
+  @Column(nullable = false)
+  private Long coverageCode;
 
   @Column(nullable = false, length = 11)
   private String insuredDocument;
@@ -47,9 +49,7 @@ public class Claim {
   @JoinColumn(name = "notification_address", nullable = false)
   private NotificationAddress notificationAddress;
 
-  @OneToOne
-  @JoinColumn(name = "policy", nullable = false)
-  private Policy policy;
+  private Long policy;
 
   @Temporal(TemporalType.DATE)
   @Column(nullable = false)

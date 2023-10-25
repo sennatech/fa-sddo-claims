@@ -11,6 +11,7 @@ import java.util.Map;
 
 import br.com.sennatech.sddo.claims.function.ClaimToClaimDTO;
 import br.com.sennatech.sddo.claims.domain.dto.ClaimDTO;
+import br.com.sennatech.sddo.claims.domain.entity.Claim;
 import br.com.sennatech.sddo.claims.domain.entity.Notifier;
 import br.com.sennatech.sddo.claims.repository.ClaimRepository;
 import br.com.sennatech.sddo.claims.repository.NotifierRepository;
@@ -30,7 +31,7 @@ public class ListClaims {
     private ClaimToClaimDTO converter;
 
     public List<ClaimDTO> run(Map<String, String> queryParameters) throws IllegalArgumentException {
-        List<ClaimDTO> listOfAllClaims = new ArrayList<>();
+        List<Claim> listOfAllClaims = new ArrayList<>();
         String stringStatus = queryParameters.get("status");
         String insuredDocument = queryParameters.get("insuredDocument");
         String notifierDocument = queryParameters.get("notifierDocument");
@@ -41,25 +42,25 @@ public class ListClaims {
             listOfAllClaims.addAll(getClaimDTOsFromInsuredDocument(insuredDocument));
         }
         if (stringStatus != null) {
-            return listOfAllClaims.stream().filter(claim -> claim.getStatus().equals(Status.fromString(stringStatus))).collect(Collectors.toList());
+            return listOfAllClaims.stream().filter(claim -> claim.getStatus().equals(Status.fromString(stringStatus))).map(claim -> converter.apply(claim)).collect(Collectors.toList());
         }
-        return listOfAllClaims;
+        return listOfAllClaims.stream().map(claim -> converter.apply(claim)).collect(Collectors.toList());
     }
 
     /**
      * @param insuredDocument
      * @return List of ClaimDTOs from the repository filtered by the issued insuredDocument value in param
      */
-    private List<ClaimDTO> getClaimDTOsFromInsuredDocument(String insuredDocument) {
-        return claimRepository.findByInsuredDocument(insuredDocument).stream().map(claim -> converter.apply(claim)).collect(Collectors.toList());
+    private List<Claim> getClaimDTOsFromInsuredDocument(String insuredDocument) {
+        return claimRepository.findByInsuredDocument(insuredDocument);
     }
 
     /**
      * @param notifierDocument
      * @return List of ClaimDTOs from the repository filtered by the notifier entity found with the issued notifierDocument value in param
      */
-    private List<ClaimDTO> getClaimDTOsFromNotifierDocument(String notifierDocument) {
+    private List<Claim> getClaimDTOsFromNotifierDocument(String notifierDocument) {
         Notifier notifier = notifierRepository.findById(notifierDocument).orElseThrow(() -> new EntityNotFoundException("Notifier not found"));
-        return claimRepository.findByNotifier(notifier).stream().map(claim -> converter.apply(claim)).collect(Collectors.toList());
+        return claimRepository.findByNotifier(notifier);
     }
 }
