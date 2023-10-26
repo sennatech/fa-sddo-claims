@@ -2,6 +2,9 @@ package br.com.sennatech.sddo.claims.handler;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.microsoft.azure.functions.*;
 import com.microsoft.azure.functions.annotation.*;
 import br.com.sennatech.sddo.claims.service.ListClaims;
@@ -13,6 +16,8 @@ public class ListClaimsHandler {
   @Autowired
   private ListClaims service;
 
+  private static ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+
   @FunctionName("list-claims")
   public HttpResponseMessage run(
       @HttpTrigger(name = "req", methods = {
@@ -23,7 +28,8 @@ public class ListClaimsHandler {
     logger.logReq();
 
     try {
-      return request.createResponseBuilder(HttpStatus.OK).body(service.run(request.getQueryParameters()).toString()).build();
+      String response = mapper.writeValueAsString(service.run(request.getQueryParameters()));
+      return request.createResponseBuilder(HttpStatus.OK).body(response).build();
     } catch (Exception e) {
       logger.logError(e);
       return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR).build();

@@ -1,4 +1,5 @@
 package br.com.sennatech.sddo.claims.domain.entity;
+
 import java.sql.Blob;
 
 import jakarta.persistence.*;
@@ -11,6 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 public class Document {
     @Id
+    @GeneratedValue
     @Column(nullable = false, unique = true, updatable = false)
     private Long id;
     @Column(nullable = false)

@@ -13,6 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 public class Policy {
     @Id
+    @GeneratedValue
     @Column(unique = true, updatable = false, nullable = false)
     private Long number;
     @Temporal(TemporalType.DATE)
@@ -21,10 +22,8 @@ public class Policy {
     @Temporal(TemporalType.DATE)
     @Column(nullable = false)
     private LocalDate validityEnd;
-
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
-
     @ManyToOne
     @JoinColumn(name = "holder_document", nullable = false)
     private Customer customer;

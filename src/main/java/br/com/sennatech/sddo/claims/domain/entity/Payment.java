@@ -13,6 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 public class Payment {
     @Id
+    @GeneratedValue
     @Column(nullable = false, updatable = false, unique = true)
     private Long id;
     @Temporal(TemporalType.TIMESTAMP)
@@ -21,5 +22,5 @@ public class Payment {
     @Column(nullable = false)
     private String transaction;
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal value;
+    private BigDecimal amount;
 }

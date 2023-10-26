@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import br.com.sennatech.sddo.claims.function.ClaimToClaimDTO;
-import br.com.sennatech.sddo.claims.domain.dto.ClaimDTO;
+import br.com.sennatech.sddo.claims.function.ClaimToClaimListDTO;
+import br.com.sennatech.sddo.claims.domain.dto.ClaimListDTO;
 import br.com.sennatech.sddo.claims.domain.entity.Claim;
 import br.com.sennatech.sddo.claims.domain.entity.Notifier;
 import br.com.sennatech.sddo.claims.repository.ClaimRepository;
@@ -28,9 +28,9 @@ public class ListClaims {
     private NotifierRepository notifierRepository;
 
     @Autowired
-    private ClaimToClaimDTO converter;
+    private ClaimToClaimListDTO converter;
 
-    public List<ClaimDTO> run(Map<String, String> queryParameters) throws IllegalArgumentException {
+    public List<ClaimListDTO> run(Map<String, String> queryParameters) throws IllegalArgumentException {
         List<Claim> listOfAllClaims = new ArrayList<>();
         String stringStatus = queryParameters.get("status");
         String insuredDocument = queryParameters.get("insuredDocument");
@@ -40,6 +40,9 @@ public class ListClaims {
         }
         if (insuredDocument != null && notifierDocument == null) {
             listOfAllClaims.addAll(getClaimDTOsFromInsuredDocument(insuredDocument));
+        }
+        if (insuredDocument == null && notifierDocument == null) {
+            listOfAllClaims.addAll(claimRepository.findAll());
         }
         if (stringStatus != null) {
             return listOfAllClaims.stream().filter(claim -> claim.getStatus().equals(Status.fromString(stringStatus))).map(claim -> converter.apply(claim)).collect(Collectors.toList());

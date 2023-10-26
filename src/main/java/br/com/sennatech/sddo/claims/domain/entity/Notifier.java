@@ -30,7 +30,7 @@ public class Notifier {
   @Temporal(TemporalType.DATE)
   private LocalDate birthdate;
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false, length = 1)
+  @Column(nullable = false)
   private Gender gender;
   @Column(nullable = false)
   private String email;

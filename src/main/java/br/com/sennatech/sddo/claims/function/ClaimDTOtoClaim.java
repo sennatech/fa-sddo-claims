@@ -1,5 +1,6 @@
 package br.com.sennatech.sddo.claims.function;
 
+import java.time.LocalDate;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,8 @@ public class ClaimDTOtoClaim implements Function<ClaimDTO, Claim> {
     public Claim apply(ClaimDTO claimDTO) {
         return Claim.builder()
             .description(claimDTO.getDescription())
-            .date(claimDTO.getDate())
+                .date(claimDTO.getDate())
+            .notificationDate(LocalDate.now())
             .notificationAddress(notificationAddressDTOtoNotificationAdress.apply(claimDTO.getAddress()))
             .coverageCode(claimDTO.getCoverageCode())
             .insuredDocument(claimDTO.getInsuredDocument())

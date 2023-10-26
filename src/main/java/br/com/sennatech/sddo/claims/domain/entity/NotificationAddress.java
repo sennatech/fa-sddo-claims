@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 public class NotificationAddress {
     @Id
+    @GeneratedValue
     @Column(nullable = false, updatable = false, unique = true)
     private Long id;
     @Column(nullable = false, length = 100)

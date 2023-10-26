@@ -2,6 +2,8 @@ package br.com.sennatech.sddo.claims.domain.dto;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import br.com.sennatech.sddo.claims.domain.enums.Gender;
 import lombok.*;
 
@@ -11,6 +13,7 @@ import lombok.*;
 public class CustomerDTO {
     private String documentNumber;
     private String name;
+    @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate birthdate;
     private Gender gender;
     private String login;
