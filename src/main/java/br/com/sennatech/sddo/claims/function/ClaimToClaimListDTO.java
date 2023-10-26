@@ -12,7 +12,7 @@ public class ClaimToClaimListDTO implements Function<Claim, ClaimListDTO> {
     @Override
     public ClaimListDTO apply(Claim claim) {
         return ClaimListDTO.builder()
-        .claimId("CLM-" + claim.getId())
+        .claimId("CLA-" + claim.getId())    
         .date(claim.getDate())
         .insuredDocument(claim.getInsuredDocument())
         .notificationDate(claim.getNotificationDate())

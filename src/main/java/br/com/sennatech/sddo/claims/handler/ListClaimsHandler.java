@@ -21,7 +21,7 @@ public class ListClaimsHandler {
   @FunctionName("list-claims")
   public HttpResponseMessage run(
       @HttpTrigger(name = "req", methods = {
-          HttpMethod.GET}, authLevel = AuthorizationLevel.ANONYMOUS, route = "") HttpRequestMessage<String> request,
+          HttpMethod.GET }, authLevel = AuthorizationLevel.ANONYMOUS, route = "list") HttpRequestMessage<String> request,
       final ExecutionContext context) throws InterruptedException {
 
     LoggerUtil logger = LoggerUtil.create(context, request);

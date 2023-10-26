@@ -7,11 +7,11 @@ public enum Operation {
 
   public static Operation get(String functionName) {
     switch (functionName) {
-      case "notification":
+      case "create-notification":
         return CLAIM_NOTIFIED;
       case "update-claim-status":
         return CLAIMS_STATUS_UPDATED;
-      case "sent-documents":
+      case "send-documents":
         return DOCUMENT_SENT;
       default:
         throw new UnsupportedOperationException("Non-existent operation: " + functionName);
