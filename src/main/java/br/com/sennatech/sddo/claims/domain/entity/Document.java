@@ -1,13 +1,12 @@
 package br.com.sennatech.sddo.claims.domain.entity;
 
-import java.sql.Blob;
-
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Table(name = "document")
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Document {
@@ -15,12 +14,12 @@ public class Document {
     @GeneratedValue
     @Column(nullable = false, unique = true, updatable = false)
     private Long id;
+    @Lob
     @Column(nullable = false)
-    private Blob file;
+    private Byte[] file;
     @Column(nullable = false)
     private String name;
     @JoinColumn(name = "claim", nullable = false)
     @ManyToOne
     private Claim claim;
-
 }

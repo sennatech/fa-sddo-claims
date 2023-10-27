@@ -11,7 +11,7 @@ public enum Operation {
         return CLAIM_NOTIFIED;
       case "update-claim-status":
         return CLAIMS_STATUS_UPDATED;
-      case "send-documents":
+      case "send-document":
         return DOCUMENT_SENT;
       default:
         throw new UnsupportedOperationException("Non-existent operation: " + functionName);
