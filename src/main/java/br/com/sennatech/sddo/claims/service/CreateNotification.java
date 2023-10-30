@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.sennatech.sddo.claims.domain.dto.ClaimDTO;
-import br.com.sennatech.sddo.claims.domain.entity.Claim;
 import br.com.sennatech.sddo.claims.domain.entity.InsuredAddress;
+import br.com.sennatech.sddo.claims.domain.entity.Claim;
 import br.com.sennatech.sddo.claims.domain.entity.Policy;
 import br.com.sennatech.sddo.claims.domain.enums.Status;
 import br.com.sennatech.sddo.claims.exception.ExpiredPolicyException;

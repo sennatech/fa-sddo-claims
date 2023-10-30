@@ -7,28 +7,30 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.microsoft.azure.functions.*;
 import com.microsoft.azure.functions.annotation.*;
-import br.com.sennatech.sddo.claims.service.ListClaims;
+
+import br.com.sennatech.sddo.claims.service.ClaimDetails;
 import br.com.sennatech.sddo.claims.util.LoggerUtil;
 
 @Component
-public class ListClaimsHandler {
+public class ClaimDetailsHandler {
 
   @Autowired
-  private ListClaims service;
+  private ClaimDetails service;
 
   private static ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
-  @FunctionName("list-claims")
+  @FunctionName("claim-details")
   public HttpResponseMessage run(
       @HttpTrigger(name = "req", methods = {
-          HttpMethod.GET }, authLevel = AuthorizationLevel.ANONYMOUS, route = "list") HttpRequestMessage<String> request,
+          HttpMethod.GET }, authLevel = AuthorizationLevel.ANONYMOUS, route = "{claimId}") HttpRequestMessage<String> request,
+      @BindingName("claimId") String claimId,
       final ExecutionContext context) throws InterruptedException {
 
     LoggerUtil logger = LoggerUtil.create(context, request);
     logger.logReq();
 
     try {
-      String response = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(service.run(request.getQueryParameters()));
+      String response = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(service.run(claimId));
       return request.createResponseBuilder(HttpStatus.OK).body(response).build();
     } catch (Exception e) {
       logger.logError(e);

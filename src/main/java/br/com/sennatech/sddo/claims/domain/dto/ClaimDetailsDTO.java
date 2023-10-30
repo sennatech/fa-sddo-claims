@@ -4,19 +4,19 @@ import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class ClaimDTO {
+public class ClaimDetailsDTO {
   private String description;
   @JsonFormat(pattern="yyyy-MM-dd")
   private LocalDate date;
-  private String insuredDocument;
-  private NotificationAddressDTO address;
+  private LocalDate notificationDate;
   private Long policyNumber;
+  private InsuredDTO insured;
   private NotifierDTO notifier;
-  private Long coverageCode;
+  private CoverageDTO coverage;
+  private InsuredAddressDTO insuredAddress;
 }
