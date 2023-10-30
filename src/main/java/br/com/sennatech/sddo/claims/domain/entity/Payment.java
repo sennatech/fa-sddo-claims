@@ -19,7 +19,7 @@ public class Payment {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private LocalDateTime dateTime;
-    @Column(nullable = false)
+    @Column(nullable = false, name = "`transaction")
     private String transaction;
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
