@@ -12,7 +12,7 @@ import lombok.Data;
 public class EventDTO {
   private Object data;
   private Operation operation;
-  private final String DOMAIN = "Seguro";
+  private String domain;
   private final String origin = System.getenv("origin");
   private String timestamp;
 
@@ -22,6 +22,7 @@ public class EventDTO {
     } else {
       this.data = dataObjects[0];
     }
+    this.domain = "Seguro";
     this.operation = Operation.get(context.getFunctionName());
     this.timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
   }

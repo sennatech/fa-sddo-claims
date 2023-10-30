@@ -34,11 +34,11 @@ public class ClaimDetails {
         Long claimId = Long
                 .valueOf((claimIdString.contains("CLA-")) ? claimIdString.replace("CLA-", "") : claimIdString);
         var claim = repository.findById(claimId).orElseThrow(() -> new EntityNotFoundException("Claim not found"));
-        Policy policy = policyRepository.getReferenceById(claim.getPolicy());
-        var coverage = coverageRepository.getReferenceById(claim.getCoverageCode());
+        Policy policy = policyRepository.findById(claim.getPolicy()).orElseThrow(() -> new EntityNotFoundException("Policy not found"));
+        var coverage = coverageRepository.findById(claim.getCoverageCode()).orElseThrow(() -> new EntityNotFoundException("Coverage not found"));
         var notifier = claim.getNotifier();
-        var insuredAddress = insuredAddressRepository.getReferenceByPolicy(policy);
-        var customer = customerRepository.getReferenceById(claim.getInsuredDocument());
+        var insuredAddress = insuredAddressRepository.findByPolicy(policy).orElseThrow(() -> new EntityNotFoundException("Insured Address not found"));
+        var customer = customerRepository.findById(claim.getInsuredDocument()).orElseThrow(() -> new EntityNotFoundException("Customer not found"));
         return converter.apply(claim, coverage, notifier, insuredAddress, customer);
     }
 }
