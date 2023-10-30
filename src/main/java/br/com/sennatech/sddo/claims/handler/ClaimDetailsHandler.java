@@ -22,7 +22,7 @@ public class ClaimDetailsHandler {
   @FunctionName("claim-details")
   public HttpResponseMessage run(
       @HttpTrigger(name = "req", methods = {
-          HttpMethod.GET }, authLevel = AuthorizationLevel.ANONYMOUS, route = "{claimId}") HttpRequestMessage<String> request,
+          HttpMethod.GET }, authLevel = AuthorizationLevel.ANONYMOUS, route = "details/{claimId}") HttpRequestMessage<String> request,
       @BindingName("claimId") String claimId,
       final ExecutionContext context) throws InterruptedException {
 

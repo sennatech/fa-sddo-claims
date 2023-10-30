@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Notifier {
   @Id
-  @Column(nullable = false, updatable = false, length = 11)
+  @Column(nullable = false, length = 11, updatable = true, unique = false)
   private String documentNumber;
   @Column(nullable = false)
   private String name;
