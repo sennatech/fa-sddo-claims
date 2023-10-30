@@ -23,7 +23,7 @@ public class Coverage {
   private String description;
 
   @Column(nullable = false)
-  private Double value;
+  private Double amount;
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)

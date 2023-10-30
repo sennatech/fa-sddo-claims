@@ -10,6 +10,6 @@ import lombok.*;
 public class PaymentDTO {
     private Long id;
     private LocalDateTime dateTime;
-    private String transaction;
+    private String transactionValue;
     private BigDecimal paymentValue;
 }
