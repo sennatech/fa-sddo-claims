@@ -11,5 +11,5 @@ public class PaymentDTO {
     private Long id;
     private LocalDateTime dateTime;
     private String transaction;
-    private BigDecimal value;
+    private BigDecimal paymentValue;
 }

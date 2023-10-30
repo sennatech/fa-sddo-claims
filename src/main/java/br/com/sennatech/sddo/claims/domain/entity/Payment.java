@@ -22,5 +22,5 @@ public class Payment {
     @Column(nullable = false, name = "`transaction`")
     private String transaction;
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal amount;
+    private BigDecimal paymentValue;
 }
