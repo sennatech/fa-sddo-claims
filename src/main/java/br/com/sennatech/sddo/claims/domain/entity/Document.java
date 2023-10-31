@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "document")
+@Table(name = "documents")
 @Data
 @Builder
 @AllArgsConstructor
@@ -19,7 +19,7 @@ public class Document {
     private Byte[] file;
     @Column(nullable = false)
     private String name;
-    @JoinColumn(name = "claim", nullable = false)
+    @JoinColumn(name = "claimId", nullable = false)
     @ManyToOne
     private Claim claim;
 }

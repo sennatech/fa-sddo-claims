@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "claim")
+@Table(name = "claims")
 @Data
 @Builder
 @AllArgsConstructor
@@ -52,6 +52,7 @@ public class Claim {
   @JoinColumn(name = "notification_address", nullable = false)
   private NotificationAddress notificationAddress;
 
+  @Column(nullable = false)
   private Long policy;
 
   @Temporal(TemporalType.DATE)

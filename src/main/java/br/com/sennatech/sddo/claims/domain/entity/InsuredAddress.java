@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "insured_address")
+@Table(name = "insured_addresses")
 @Data
 public class InsuredAddress {
     @Id
@@ -29,7 +29,7 @@ public class InsuredAddress {
     @Column(nullable = false, length = 2)
     private String state;
     @Column(nullable = false)
-    private Long areaCode;
+    private Long zipcode;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "policy", nullable = false)
     private Policy policy;

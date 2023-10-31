@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "payment")
+@Table(name = "payments")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,5 +22,5 @@ public class Payment {
     @Column(nullable = false, name = "`transaction`")
     private String transaction;
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal paymentValue;
+    private BigDecimal amount;
 }
