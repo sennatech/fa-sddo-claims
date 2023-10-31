@@ -42,7 +42,7 @@ public class CreateNotification {
             InsuredAddress insuredAddress = insuredAddressRepository.getReferenceByPolicy(policy);
             if (date.isAfter(policy.getValidityEnd()))
                 throw new ExpiredPolicyException("Occurency date is after policy validity end");
-            if (!zipcode.equals(insuredAddress.getAreaCode()))
+            if (!zipcode.equals(insuredAddress.getZipcode()))
                 throw new InvalidNotificationAddressException(
                         "Notification address zipcode different from insured address zipcode from specified policy");
         } catch (Exception e) {
