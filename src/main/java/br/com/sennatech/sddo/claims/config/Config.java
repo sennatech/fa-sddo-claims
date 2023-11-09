@@ -7,7 +7,7 @@ import org.springframework.context.annotation.*;
 public class Config {
 
   public static final String CONN_STRING = "AzureEventHubConnection";
-  public static final String EVENT_HUB_NAME = "topico-sddo-claims";
+  public static final String EVENT_HUB_NAME = "topico-sddo-sinistros";
 
   @Bean
   public ModelMapper modelMapper() {

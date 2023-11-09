@@ -15,7 +15,9 @@ import br.com.sennatech.sddo.claims.exception.InvalidNotificationAddressExceptio
 import br.com.sennatech.sddo.claims.function.ClaimDTOtoClaim;
 import br.com.sennatech.sddo.claims.repository.ClaimRepository;
 import br.com.sennatech.sddo.claims.repository.InsuredAddressRepository;
+import br.com.sennatech.sddo.claims.repository.NotifierRepository;
 import br.com.sennatech.sddo.claims.repository.PolicyRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class CreateNotification {
@@ -27,13 +29,19 @@ public class CreateNotification {
     private PolicyRepository policyRepository;
 
     @Autowired
+    private NotifierRepository notifierRepository;
+
+    @Autowired
     private InsuredAddressRepository insuredAddressRepository;
 
     @Autowired
     private ClaimDTOtoClaim converter;
 
+    @Transactional
     public void run(ClaimDTO claimDTO) {
         Claim claim = converter.apply(claimDTO);
+        String notifierDocument = claim.getNotifier().getDocumentNumber();
+        if (notifierRepository.existsById(notifierDocument)) claim.setNotifier(notifierRepository.getReferenceById(notifierDocument));
         Long policyNumber = claim.getPolicy();
         Long zipcode = claim.getNotificationAddress().getZipcode();
         LocalDate date = claim.getDate();

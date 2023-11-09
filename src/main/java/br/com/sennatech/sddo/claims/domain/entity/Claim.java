@@ -34,7 +34,7 @@ public class Claim {
   @Enumerated(EnumType.STRING)
   private Type type;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "notifier_document", nullable = false)
   private Notifier notifier;
 
