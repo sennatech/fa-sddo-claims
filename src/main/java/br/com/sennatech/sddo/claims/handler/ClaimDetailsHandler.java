@@ -1,6 +1,5 @@
 package br.com.sennatech.sddo.claims.handler;
 
-import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,14 +7,15 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.microsoft.azure.functions.*;
 import com.microsoft.azure.functions.annotation.*;
 
-import br.com.sennatech.sddo.claims.service.ClaimDetails;
+import br.com.sennatech.sddo.claims.service.ClaimService;
 import br.com.sennatech.sddo.claims.util.LoggerUtil;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class ClaimDetailsHandler {
 
-  @Autowired
-  private ClaimDetails service;
+  private final ClaimService service;
 
   private static ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
@@ -30,7 +30,7 @@ public class ClaimDetailsHandler {
     logger.logReq();
 
     try {
-      String response = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(service.run(claimId));
+      String response = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(service.retrieveFromClaimId(claimId));
       return request.createResponseBuilder(HttpStatus.OK).body(response).build();
     } catch (Exception e) {
       logger.logError(e);

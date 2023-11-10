@@ -1,6 +1,5 @@
 package br.com.sennatech.sddo.claims.handler;
 
-import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,14 +10,15 @@ import com.microsoft.azure.functions.annotation.*;
 import br.com.sennatech.sddo.claims.config.Config;
 import br.com.sennatech.sddo.claims.domain.dto.DocumentDTO;
 import br.com.sennatech.sddo.claims.domain.dto.event.EventDTO;
-import br.com.sennatech.sddo.claims.service.SendDocument;
+import br.com.sennatech.sddo.claims.service.DocumentService;
 import br.com.sennatech.sddo.claims.util.LoggerUtil;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class SendDocumentHandler {
 
-  @Autowired
-  private SendDocument service;
+  private final DocumentService service;
 
   private static ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
@@ -34,7 +34,7 @@ public class SendDocumentHandler {
 
     try {
       var documentDTO = mapper.readValue(request.getBody(), DocumentDTO.class);
-      service.run(documentDTO);
+      service.create(documentDTO);
       outputItem.setValue(EventDTO.create(context, request.getBody()));
       return request.createResponseBuilder(HttpStatus.ACCEPTED).build();
     } catch (Exception e) {

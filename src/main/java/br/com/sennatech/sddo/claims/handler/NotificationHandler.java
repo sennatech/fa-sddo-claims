@@ -1,26 +1,26 @@
 package br.com.sennatech.sddo.claims.handler;
 
-import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.microsoft.azure.functions.*;
 import com.microsoft.azure.functions.annotation.*;
 
 import br.com.sennatech.sddo.claims.config.Config;
 import br.com.sennatech.sddo.claims.domain.dto.ClaimDTO;
 import br.com.sennatech.sddo.claims.domain.dto.event.EventDTO;
-import br.com.sennatech.sddo.claims.service.CreateNotification;
+import br.com.sennatech.sddo.claims.domain.dto.util.ResponseDTO;
+import br.com.sennatech.sddo.claims.service.ClaimService;
 import br.com.sennatech.sddo.claims.util.LoggerUtil;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class NotificationHandler {
 
-  @Autowired
-  private CreateNotification service;
-
-  private static ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+  private final ClaimService service;
+  private final ObjectMapper mapper;
 
   @FunctionName("create-notification")
   public HttpResponseMessage run(
@@ -34,9 +34,13 @@ public class NotificationHandler {
 
     try {
       ClaimDTO claimDTO = mapper.readValue(request.getBody(), ClaimDTO.class);
-      service.run(claimDTO);
+      service.create(claimDTO);
       outputItem.setValue(EventDTO.create(context, request.getBody()));
-      return request.createResponseBuilder(HttpStatus.CREATED).build();
+      Object responsePayload = (service.getAutoRefusalReasons().isEmpty()) ? null : service.getAutoRefusalReasons();
+      return request.createResponseBuilder(HttpStatus.CREATED).body(responsePayload).build();
+    } catch (EntityNotFoundException e) {
+      logger.logError(e);
+      return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(ResponseDTO.create(e.getMessage())).build();
     } catch (Exception e) {
       logger.logError(e);
       return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR).build();

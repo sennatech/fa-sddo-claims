@@ -31,7 +31,7 @@ public class InsuredAddress {
     @Column(nullable = false)
     private Long zipcode;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "policy", nullable = false)
+    @JoinColumn(name = "policyNumber", nullable = false)
     private Policy policy;
     @Column(nullable = false, length = 20)
     private String country;

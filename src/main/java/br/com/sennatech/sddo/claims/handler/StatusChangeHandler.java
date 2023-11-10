@@ -1,6 +1,5 @@
 package br.com.sennatech.sddo.claims.handler;
 
-import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Component;
 import com.microsoft.azure.functions.*;
 import com.microsoft.azure.functions.annotation.*;
@@ -8,14 +7,15 @@ import com.microsoft.azure.functions.annotation.*;
 import br.com.sennatech.sddo.claims.config.Config;
 import br.com.sennatech.sddo.claims.domain.dto.StatusUpdateDTO;
 import br.com.sennatech.sddo.claims.domain.dto.event.EventDTO;
-import br.com.sennatech.sddo.claims.service.UpdateStatus;
+import br.com.sennatech.sddo.claims.service.ClaimService;
 import br.com.sennatech.sddo.claims.util.LoggerUtil;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class StatusChangeHandler {
 
-  @Autowired
-  private UpdateStatus service;
+  private final ClaimService service;
 
   @FunctionName("update-claim-status")
   public HttpResponseMessage run(
@@ -29,7 +29,7 @@ public class StatusChangeHandler {
     logger.logReq();
 
     try {
-      service.run(claimId, request.getBody().getStatus());
+      service.updateStatus(claimId, request.getBody().getStatus());
       outputItem.setValue(EventDTO.create(context, claimId + " updated to " + request.getBody().getStatus()));
       return request.createResponseBuilder(HttpStatus.ACCEPTED).build();
     } catch (Exception e) {

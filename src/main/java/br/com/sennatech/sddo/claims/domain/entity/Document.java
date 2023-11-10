@@ -20,6 +20,6 @@ public class Document {
     @Column(nullable = false)
     private String name;
     @JoinColumn(name = "claimId", nullable = false)
-    @ManyToOne
+    @OneToMany
     private Claim claim;
 }
