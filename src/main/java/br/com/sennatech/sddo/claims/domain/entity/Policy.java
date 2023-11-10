@@ -30,4 +30,7 @@ public class Policy {
     @OneToOne
     @JoinColumn(name = "payment_id", nullable = false)
     private Payment payment;
+    @OneToOne
+    @JoinColumn(name = "insured_address_id", nullable = false, referencedColumnName = "id")
+    private InsuredAddress insuredAddress;
 }
