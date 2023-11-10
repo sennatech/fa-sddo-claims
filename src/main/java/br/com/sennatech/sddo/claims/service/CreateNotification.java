@@ -17,6 +17,7 @@ import br.com.sennatech.sddo.claims.repository.ClaimRepository;
 import br.com.sennatech.sddo.claims.repository.InsuredAddressRepository;
 import br.com.sennatech.sddo.claims.repository.NotifierRepository;
 import br.com.sennatech.sddo.claims.repository.PolicyRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -41,21 +42,15 @@ public class CreateNotification {
     public void run(ClaimDTO claimDTO) {
         Claim claim = converter.apply(claimDTO);
         String notifierDocument = claim.getNotifier().getDocumentNumber();
-        if (notifierRepository.existsById(notifierDocument)) claim.setNotifier(notifierRepository.getReferenceById(notifierDocument));
-        Long policyNumber = claim.getPolicy();
+        if (notifierRepository.existsById(notifierDocument))
+            claim.setNotifier(notifierRepository.getReferenceById(notifierDocument));
         Long zipcode = claim.getNotificationAddress().getZipcode();
-        LocalDate date = claim.getDate();
-        try {
-            Policy policy = policyRepository.getReferenceById(policyNumber);
-            InsuredAddress insuredAddress = insuredAddressRepository.getReferenceByPolicy(policy);
-            if (date.isAfter(policy.getValidityEnd()))
-                throw new ExpiredPolicyException("Occurency date is after policy validity end");
-            if (!zipcode.equals(insuredAddress.getZipcode()))
-                throw new InvalidNotificationAddressException(
-                        "Notification address zipcode different from insured address zipcode from specified policy");
-        } catch (Exception e) {
+        Policy policy = policyRepository.findById(claim.getPolicy())
+                .orElseThrow(() -> new EntityNotFoundException("Policy not found"));
+        InsuredAddress insuredAddress = insuredAddressRepository.findByPolicy(policy)
+                .orElseThrow(() -> new EntityNotFoundException("Invalid insured address"));
+        if (claim.getDate().isAfter(policy.getValidityEnd()) || !zipcode.equals(insuredAddress.getZipcode()))
             claim.setStatus(Status.RECUSADO);
-        }
         claimRepository.save(claim);
     }
 }
