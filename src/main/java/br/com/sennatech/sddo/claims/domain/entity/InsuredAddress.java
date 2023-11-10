@@ -30,8 +30,7 @@ public class InsuredAddress {
     private String state;
     @Column(nullable = false)
     private Long zipcode;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "policy", nullable = false)
+    @OneToOne(mappedBy = "insuredAddress")
     private Policy policy;
     @Column(nullable = false, length = 20)
     private String country;
