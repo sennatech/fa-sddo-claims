@@ -1,5 +1,8 @@
 package br.com.sennatech.sddo.claims.domain.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,7 +22,8 @@ public class Document {
     private Byte[] file;
     @Column(nullable = false)
     private String name;
-    @JoinColumn(name = "claimId", nullable = false)
-    @OneToOne
-    private Claim claim;
+    @Builder.Default
+    @JoinColumn(name = "claim_id")
+    @OneToMany(cascade = CascadeType.MERGE, orphanRemoval = true)
+    private List<Claim> claim = new ArrayList<>();
 }

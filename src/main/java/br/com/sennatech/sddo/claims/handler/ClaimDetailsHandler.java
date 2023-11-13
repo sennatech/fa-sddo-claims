@@ -7,8 +7,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.microsoft.azure.functions.*;
 import com.microsoft.azure.functions.annotation.*;
 
+import br.com.sennatech.sddo.claims.domain.dto.util.ResponseDTO;
 import br.com.sennatech.sddo.claims.service.ClaimService;
 import br.com.sennatech.sddo.claims.util.LoggerUtil;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -32,6 +34,9 @@ public class ClaimDetailsHandler {
     try {
       String response = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(service.retrieveFromClaimId(claimId));
       return request.createResponseBuilder(HttpStatus.OK).body(response).build();
+    } catch (EntityNotFoundException e) {
+      logger.logError(e);
+      return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(ResponseDTO.create(e.getMessage())).build();
     } catch (Exception e) {
       logger.logError(e);
       return request.createResponseBuilder(HttpStatus.INTERNAL_SERVER_ERROR).build();

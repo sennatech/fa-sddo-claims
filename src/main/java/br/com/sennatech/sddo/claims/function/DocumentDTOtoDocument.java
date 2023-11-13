@@ -6,23 +6,27 @@ import org.springframework.stereotype.Component;
 
 import br.com.sennatech.sddo.claims.domain.dto.DocumentDTO;
 import br.com.sennatech.sddo.claims.domain.entity.Document;
-import br.com.sennatech.sddo.claims.repository.ClaimRepository;
+import br.com.sennatech.sddo.claims.service.ClaimService;
+import br.com.sennatech.sddo.claims.util.TransformationUtil;
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class DocumentDTOtoDocument implements Function<DocumentDTO, Document> {
 
-    private final ClaimRepository claimRepository;
+    private final ClaimService claimService;
 
     @Override
     public Document apply(DocumentDTO documentDTO) {
-        Long claimId = Long.valueOf(documentDTO.getClaimId().replace("CLA-", ""));
-        return Document.builder()
-        .claim(claimRepository.getReferenceById(claimId))
+        var document = Document.builder()
         .file(documentDTO.getFile())
         .name(documentDTO.getName())
         .id(documentDTO.getId())
-        .build();
+                .build();
+
+        document.getClaim()
+                .add(claimService.retrieveFromId(TransformationUtil.claimIdToLong(documentDTO.getClaimId())));
+                
+        return document;
     }
 }

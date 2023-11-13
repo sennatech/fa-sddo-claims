@@ -36,8 +36,9 @@ public class NotificationHandler {
       ClaimDTO claimDTO = mapper.readValue(request.getBody(), ClaimDTO.class);
       service.create(claimDTO);
       outputItem.setValue(EventDTO.create(context, request.getBody()));
-      Object responsePayload = (service.getAutoRefusalReasons().isEmpty()) ? null : service.getAutoRefusalReasons();
-      return request.createResponseBuilder(HttpStatus.CREATED).body(responsePayload).build();
+      Object refusalReasons = (service.getAutoRefusalReasons().isEmpty()) ? null : service.getAutoRefusalReasons();
+      if (refusalReasons != null) logger.info("Auto refusal reasons: " + refusalReasons);
+      return request.createResponseBuilder(HttpStatus.CREATED).build();
     } catch (EntityNotFoundException e) {
       logger.logError(e);
       return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(ResponseDTO.create(e.getMessage())).build();

@@ -9,6 +9,7 @@ import br.com.sennatech.sddo.claims.domain.entity.*;
 import br.com.sennatech.sddo.claims.domain.enums.*;
 import br.com.sennatech.sddo.claims.function.*;
 import br.com.sennatech.sddo.claims.repository.*;
+import br.com.sennatech.sddo.claims.util.TransformationUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -46,7 +47,7 @@ public class ClaimService {
     }
 
     public ClaimDetailsDTO retrieveFromClaimId(String claimId) {
-        var claim = retrieveFromId(transformClaimToLongIfHasPrefix(claimId));
+        var claim = retrieveFromId(TransformationUtil.claimIdToLong(claimId));
         var policy = policyService.retrieveFromNumber(claim.getPolicy());
         var insuredAddress = insuredAddressService.retrieveFromPolicy(policy);
         var coverage = coverageService.retrieveFromCode(claim.getCoverageCode());
@@ -58,7 +59,7 @@ public class ClaimService {
     public void updateStatus(String claimId, Status newStatus) {
         if (newStatus.equals(Status.PENDENTE))
             throw new IllegalArgumentException("Can't set an already created status to pending");
-        var claim = retrieveFromId(transformClaimToLongIfHasPrefix(claimId));
+        var claim = retrieveFromId(TransformationUtil.claimIdToLong(claimId));
         claim.setStatus(newStatus);
         claimRepository.save(claim);
     }
@@ -93,12 +94,7 @@ public class ClaimService {
         return claimRepository.findByNotifier(notifier);
     }
     
-    private static Long transformClaimToLongIfHasPrefix(String claimId) {
-        return Long
-                .valueOf((claimId.contains("CLA-")) ? claimId.replace("CLA-", "") : claimId);
-    }
-
-    private Claim retrieveFromId(Long id) {
+    public Claim retrieveFromId(Long id) {
         return claimRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Claim not found"));
     }
 

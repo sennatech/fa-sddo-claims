@@ -14,6 +14,6 @@ public class PolicyService {
     private final PolicyRepository policyRepository;
 
     public Policy retrieveFromNumber(Long number) {
-        return policyRepository.findById(number).orElseThrow(() -> new EntityNotFoundException("PolicyNotFound"));
+        return policyRepository.findById(number).orElseThrow(() -> new EntityNotFoundException("Policy not found"));
     }
 }
