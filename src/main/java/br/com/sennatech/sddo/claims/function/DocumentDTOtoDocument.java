@@ -2,18 +2,18 @@ package br.com.sennatech.sddo.claims.function;
 
 import java.util.function.Function;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.sennatech.sddo.claims.domain.dto.DocumentDTO;
 import br.com.sennatech.sddo.claims.domain.entity.Document;
 import br.com.sennatech.sddo.claims.repository.ClaimRepository;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class DocumentDTOtoDocument implements Function<DocumentDTO, Document> {
 
-    @Autowired
-    private ClaimRepository claimRepository;
+    private final ClaimRepository claimRepository;
 
     @Override
     public Document apply(DocumentDTO documentDTO) {

@@ -1,25 +1,19 @@
 package br.com.sennatech.sddo.claims.function;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.sennatech.sddo.claims.domain.dto.ClaimDetailsDTO;
 import br.com.sennatech.sddo.claims.domain.entity.*;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class ClaimToClaimDetailsDTO {
 
-    @Autowired
-    private CoverageToCoverageDTO coverageToCoverageDTO;
-
-    @Autowired
-    private CustomerToInsuredDTO customerToInsuredDTO;
-
-    @Autowired
-    private NotifierToNotifierDTO notifierToNotifierDTO;
-
-    @Autowired
-    private InsuredAddressToInsuredAddressDTO insuredAddressToInsuredAddressDTO;
+    private final CoverageToCoverageDTO coverageToCoverageDTO;
+    private final CustomerToInsuredDTO customerToInsuredDTO;
+    private final NotifierToNotifierDTO notifierToNotifierDTO;
+    private final InsuredAddressToInsuredAddressDTO insuredAddressToInsuredAddressDTO;
 
     public ClaimDetailsDTO apply(Claim claim, Coverage coverage, Notifier notifier, InsuredAddress insuredAddress, Customer customer) {
         return ClaimDetailsDTO.builder()

@@ -7,4 +7,5 @@ import br.com.sennatech.sddo.claims.domain.entity.Document;
 
 @Repository
 public interface DocumentRepository extends JpaRepository<Document, Long> {
+    
 }

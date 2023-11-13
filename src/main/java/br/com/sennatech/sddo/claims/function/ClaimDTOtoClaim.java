@@ -3,22 +3,19 @@ package br.com.sennatech.sddo.claims.function;
 import java.time.LocalDate;
 import java.util.function.Function;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import br.com.sennatech.sddo.claims.domain.dto.ClaimDTO;
 import br.com.sennatech.sddo.claims.domain.entity.Claim;
 import br.com.sennatech.sddo.claims.domain.enums.Status;
 import br.com.sennatech.sddo.claims.domain.enums.Type;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class ClaimDTOtoClaim implements Function<ClaimDTO, Claim> {
 
-    @Autowired
-    private NotifierDTOtoNotifier notifierDTOtoNotifier;
-
-    @Autowired
-    private NotificationAddressDTOtoNotificationAdress notificationAddressDTOtoNotificationAdress;
+    private final NotifierDTOtoNotifier notifierDTOtoNotifier;
+    private final NotificationAddressDTOtoNotificationAdress notificationAddressDTOtoNotificationAdress;
 
     @Override
     public Claim apply(ClaimDTO claimDTO) {
