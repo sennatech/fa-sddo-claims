@@ -26,7 +26,7 @@ public class NotificationHandler {
   public HttpResponseMessage run(
       @HttpTrigger(name = "req", methods = {
           HttpMethod.POST}, authLevel = AuthorizationLevel.ANONYMOUS, route = "notification") HttpRequestMessage<String> request,
-      @EventHubOutput(name = "event", eventHubName = Config.EVENT_HUB_NAME, connection = Config.CONN_STRING) OutputBinding<EventDTO> outputItem,
+      @EventHubOutput(name = "event", eventHubName = Config.EVENT_HUB_NAME, connection = Config.CONN_STRING) OutputBinding<String> outputItem,
       final ExecutionContext context) {
 
     LoggerUtil logger = LoggerUtil.create(context, request);
@@ -35,7 +35,8 @@ public class NotificationHandler {
     try {
       ClaimDTO claimDTO = mapper.readValue(request.getBody(), ClaimDTO.class);
       service.create(claimDTO);
-      outputItem.setValue(EventDTO.create(context, claimDTO));
+      String event = mapper.writeValueAsString(EventDTO.create(context, claimDTO));
+      outputItem.setValue(event);
       Object refusalReasons = (service.getAutoRefusalReasons().isEmpty()) ? null : service.getAutoRefusalReasons();
       if (refusalReasons != null) logger.info("Auto refusal reasons: " + refusalReasons);
       return request.createResponseBuilder(HttpStatus.CREATED).build();

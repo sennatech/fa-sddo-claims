@@ -28,16 +28,17 @@ public class SendDocumentHandler {
   public HttpResponseMessage run(
       @HttpTrigger(name = "req", methods = {
           HttpMethod.POST}, authLevel = AuthorizationLevel.ANONYMOUS, route = "documents") HttpRequestMessage<String> request,
-      @EventHubOutput(name = "event", eventHubName = Config.EVENT_HUB_NAME, connection = Config.CONN_STRING) OutputBinding<EventDTO> outputItem,
+      @EventHubOutput(name = "event", eventHubName = Config.EVENT_HUB_NAME, connection = Config.CONN_STRING) OutputBinding<String> outputItem,
       final ExecutionContext context) {
 
     LoggerUtil logger = LoggerUtil.create(context, request);
     logger.logReq();
 
     try {
-      var documentDTO = mapper.readValue(request.getBody(), DocumentDTO.class);
+      DocumentDTO documentDTO = mapper.readValue(request.getBody(), DocumentDTO.class);
       service.create(documentDTO);
-      outputItem.setValue(EventDTO.create(context, documentDTO));
+      String event = mapper.writeValueAsString(EventDTO.create(context, documentDTO));
+      outputItem.setValue(event);
       return request.createResponseBuilder(HttpStatus.ACCEPTED).build();
     } catch (EntityNotFoundException e) {
       logger.logError(e);

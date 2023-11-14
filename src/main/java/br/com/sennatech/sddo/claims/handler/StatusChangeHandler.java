@@ -1,6 +1,8 @@
 package br.com.sennatech.sddo.claims.handler;
 
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.functions.*;
 import com.microsoft.azure.functions.annotation.*;
 
@@ -8,6 +10,7 @@ import br.com.sennatech.sddo.claims.config.Config;
 import br.com.sennatech.sddo.claims.domain.dto.StatusUpdateDTO;
 import br.com.sennatech.sddo.claims.domain.dto.event.EventDTO;
 import br.com.sennatech.sddo.claims.domain.dto.util.ResponseDTO;
+import br.com.sennatech.sddo.claims.domain.entity.Claim;
 import br.com.sennatech.sddo.claims.service.ClaimService;
 import br.com.sennatech.sddo.claims.util.LoggerUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,21 +21,23 @@ import lombok.RequiredArgsConstructor;
 public class StatusChangeHandler {
 
   private final ClaimService service;
+  private final ObjectMapper mapper;
 
   @FunctionName("update-claim-status")
   public HttpResponseMessage run(
       @HttpTrigger(name = "req", methods = {
           HttpMethod.PUT }, authLevel = AuthorizationLevel.ANONYMOUS, route = "status/{claimId}") HttpRequestMessage<StatusUpdateDTO> request,
       @BindingName("claimId") String claimId,
-      @EventHubOutput(name = "event", eventHubName = Config.EVENT_HUB_NAME, connection = Config.CONN_STRING) OutputBinding<EventDTO> outputItem,
+      @EventHubOutput(name = "event", eventHubName = Config.EVENT_HUB_NAME, connection = Config.CONN_STRING) OutputBinding<String> outputItem,
       final ExecutionContext context) {
 
     LoggerUtil logger = LoggerUtil.create(context, request);
     logger.logReq();
 
     try {
-      var claim = service.updateStatus(claimId, request.getBody().getStatus());
-      outputItem.setValue(EventDTO.create(context, claim));
+      Claim claim = service.updateStatus(claimId, request.getBody().getStatus());
+      String event = mapper.writeValueAsString(EventDTO.create(context, claim));
+      outputItem.setValue(event);
       return request.createResponseBuilder(HttpStatus.ACCEPTED).build();
     } catch (EntityNotFoundException e) {
       logger.logError(e);
