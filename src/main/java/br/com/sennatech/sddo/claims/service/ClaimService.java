@@ -102,13 +102,17 @@ public class ClaimService {
     private void checkConstraints(Claim claim) {
         var policy = policyService.retrieveFromNumber(claim.getPolicy());
         var insuredAddress = insuredAddressService.retrieveFromPolicy(policy);
+        Boolean refused = false;
         if (claim.getDate().isAfter(policy.getValidityEnd())) {
-            claim.setStatus(Status.RECUSADO);
+            refused = true;
             autoRefusalReasons.add("Notification date is after policy validity end");
         }
         if (!claim.getNotificationAddress().getZipcode().equals(insuredAddress.getZipcode())) {
-            claim.setStatus(Status.RECUSADO);
+            refused = true;
             autoRefusalReasons.add("Notification zipcode is different from insured address zipcode");
+        }
+        if (Boolean.TRUE.equals(refused)) {
+            claim.setStatus(Status.RECUSADO);
         }
     }
 }
