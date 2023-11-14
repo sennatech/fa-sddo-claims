@@ -2,6 +2,8 @@ package br.com.sennatech.sddo.claims.service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.springframework.stereotype.Service;
 
 import br.com.sennatech.sddo.claims.domain.dto.*;
@@ -32,14 +34,14 @@ public class ClaimService {
 
     //util
     private final List<String> autoRefusalReasons = new ArrayList<>();
-    
+
     public List<String> getAutoRefusalReasons() {
         return autoRefusalReasons;
     }
 
     public void create(ClaimDTO claimDTO) {
         Claim claim = claimDTOtoClaim.apply(claimDTO);
-        var notifier = notifierService.retrieveOrCreateNotifier(claim.getNotifier().getDocumentNumber(),
+        Notifier notifier = notifierService.retrieveOrCreateNotifier(claim.getNotifier().getDocumentNumber(),
                 claimDTO.getNotifier());
         claim.setNotifier(notifier);
         checkConstraints(claim);
@@ -47,61 +49,71 @@ public class ClaimService {
     }
 
     public ClaimDetailsDTO retrieveFromClaimId(String claimId) {
-        var claim = retrieveFromId(TransformationUtil.claimIdToLong(claimId));
-        var policy = policyService.retrieveFromNumber(claim.getPolicy());
-        var insuredAddress = insuredAddressService.retrieveFromPolicy(policy);
-        var coverage = coverageService.retrieveFromCode(claim.getCoverageCode());
-        var notifier = claim.getNotifier();
-        var customer = customerService.retrieveFromDocumentNumber(claim.getInsuredDocument());
+        Claim claim = retrieveFromId(TransformationUtil.claimIdToLong(claimId));
+        Policy policy = policyService.retrieveFromNumber(claim.getPolicy());
+        InsuredAddress insuredAddress = insuredAddressService.retrieveFromPolicy(policy);
+        Coverage coverage = coverageService.retrieveFromCode(claim.getCoverageCode());
+        Notifier notifier = claim.getNotifier();
+        Customer customer = customerService.retrieveFromDocumentNumber(claim.getInsuredDocument());
         return claimToClaimDetailsDTO.apply(claim, coverage, notifier, insuredAddress, customer);
     }
 
     public Claim updateStatus(String claimId, Status newStatus) {
-        if (newStatus.equals(Status.PENDENTE))
-            throw new IllegalArgumentException("Can't set an already created status to pending");
-        var claim = retrieveFromId(TransformationUtil.claimIdToLong(claimId));
+        if (newStatus == Status.PENDENTE) {
+            throw new IllegalArgumentException("Cannot set an already created status to pending");
+        }
+        long id = TransformationUtil.claimIdToLong(claimId);
+        Claim claim = retrieveFromId(id);
+        if (claim.getStatus() == newStatus) {
+            throw new IllegalArgumentException("The status is already set to the provided status");
+        }
         claim.setStatus(newStatus);
-        claimRepository.save(claim);
-        return claim;
+        return claimRepository.save(claim);
     }
 
     public List<ClaimListDTO> list(Map<String, String> queryParameters) throws IllegalArgumentException {
-        List<Claim> listOfAllClaims = new ArrayList<>();
-        String stringStatus = queryParameters.get("status");
-        String insuredDocument = queryParameters.get("insuredDocument");
-        String notifierDocument = queryParameters.get("notifierDocument");
-        if (notifierDocument != null) {
-            listOfAllClaims.addAll(retrieveFromNotifierDocument(notifierDocument));
+        Optional<String> stringStatus = Optional.ofNullable(queryParameters.get("status"));
+        Optional<String> insuredDocument = Optional.ofNullable(queryParameters.get("insuredDocument"));
+        Optional<String> notifierDocument = Optional.ofNullable(queryParameters.get("notifierDocument"));
+
+        List<Claim> listOfAllClaims = retrieveClaims(insuredDocument, notifierDocument);
+
+        Stream<Claim> claimStream = listOfAllClaims.stream();
+
+        if (stringStatus.isPresent()) {
+            final String status = stringStatus.get();
+            claimStream = claimStream.filter(claim -> claim.getStatus().equals(Status.fromString(status)));
         }
-        if (insuredDocument != null && notifierDocument == null) {
-            listOfAllClaims.addAll(retriveListFromInsuredDocument(insuredDocument));
+        return claimStream.map(claimToClaimListDTO::apply)
+                         .collect(Collectors.toList());
+    }
+
+    private List<Claim> retrieveClaims(Optional<String> insuredDocument, Optional<String> notifierDocument) {
+        if (notifierDocument.isPresent()) {
+            return retrieveListFromNotifierDocument(notifierDocument.get());
+        } else if (insuredDocument.isPresent()) {
+            return retriveListFromInsuredDocument(insuredDocument.get());
+        } else {
+            return claimRepository.findAll();
         }
-        if (insuredDocument == null && notifierDocument == null) {
-            listOfAllClaims.addAll(claimRepository.findAll());
-        }
-        if (stringStatus != null) {
-            return listOfAllClaims.stream().filter(claim -> claim.getStatus().equals(Status.fromString(stringStatus)))
-                    .map(claimToClaimListDTO::apply).collect(Collectors.toList());
-        }
-        return listOfAllClaims.stream().map(claimToClaimListDTO::apply).collect(Collectors.toList());
     }
 
     private List<Claim> retriveListFromInsuredDocument(String insuredDocument) {
         return claimRepository.findByInsuredDocument(insuredDocument);
     }
 
-    private List<Claim> retrieveFromNotifierDocument(String notifierDocument) {
+    private List<Claim> retrieveListFromNotifierDocument(String notifierDocument) {
         var notifier = notifierService.retrieveFromDocumentNumber(notifierDocument);
         return claimRepository.findByNotifier(notifier);
     }
-    
+
     public Claim retrieveFromId(Long id) {
         return claimRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Claim not found"));
     }
 
     private void checkConstraints(Claim claim) {
-        var policy = policyService.retrieveFromNumber(claim.getPolicy());
-        var insuredAddress = insuredAddressService.retrieveFromPolicy(policy);
+        Policy policy = policyService.retrieveFromNumber(claim.getPolicy());
+        InsuredAddress insuredAddress = insuredAddressService.retrieveFromPolicy(policy);
         Boolean refused = false;
         if (claim.getDate().isAfter(policy.getValidityEnd())) {
             refused = true;
