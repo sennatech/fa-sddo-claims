@@ -27,7 +27,7 @@ public class NotificationHandler {
       @HttpTrigger(name = "req", methods = {
           HttpMethod.POST}, authLevel = AuthorizationLevel.ANONYMOUS, route = "notification") HttpRequestMessage<String> request,
       @EventHubOutput(name = "event", eventHubName = Config.EVENT_HUB_NAME, connection = Config.CONN_STRING) OutputBinding<EventDTO> outputItem,
-      final ExecutionContext context) throws InterruptedException {
+      final ExecutionContext context) {
 
     LoggerUtil logger = LoggerUtil.create(context, request);
     logger.logReq();
@@ -35,7 +35,7 @@ public class NotificationHandler {
     try {
       ClaimDTO claimDTO = mapper.readValue(request.getBody(), ClaimDTO.class);
       service.create(claimDTO);
-      outputItem.setValue(EventDTO.create(context, request.getBody()));
+      outputItem.setValue(EventDTO.create(context, claimDTO));
       Object refusalReasons = (service.getAutoRefusalReasons().isEmpty()) ? null : service.getAutoRefusalReasons();
       if (refusalReasons != null) logger.info("Auto refusal reasons: " + refusalReasons);
       return request.createResponseBuilder(HttpStatus.CREATED).build();

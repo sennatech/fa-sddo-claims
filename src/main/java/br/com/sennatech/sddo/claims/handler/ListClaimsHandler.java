@@ -23,7 +23,7 @@ public class ListClaimsHandler {
   public HttpResponseMessage run(
       @HttpTrigger(name = "req", methods = {
           HttpMethod.GET }, authLevel = AuthorizationLevel.ANONYMOUS, route = "list") HttpRequestMessage<String> request,
-      final ExecutionContext context) throws InterruptedException {
+      final ExecutionContext context) {
 
     LoggerUtil logger = LoggerUtil.create(context, request);
     logger.logReq();

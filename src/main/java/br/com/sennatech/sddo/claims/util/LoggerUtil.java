@@ -21,21 +21,18 @@ public class LoggerUtil {
         return new LoggerUtil(context, requestMessage);
     }
 
-    public void info(String message) throws InterruptedException {
-        Thread.sleep(1); // Thread aguarda 1 seg, assim os logs saem sincronizados e em sequência
-        StringBuilder logMsgStringBuilder = new StringBuilder("[" + context.getFunctionName() + "] - "); // Com isso todos os log conterá o nome da função atual
-        if (!message.isEmpty()) {
-            logMsgStringBuilder.append(message);
-            String messageBuilt = logMsgStringBuilder.toString();
-            logger.info(messageBuilt);
+    public void info(String message) {
+        if (message != null) {
+            String info = String.format("[%S] - %s", context.getFunctionName(), message);
+            logger.info(info);
         }
     }
 
-    public void logError(Exception e) throws InterruptedException {
+    public void logError(Exception e) {
         info(ExceptionUtil.stackTraceToString(e));
     }
 
-    public void logReq() throws InterruptedException {
+    public void logReq() {
         info("Query Parameters: " + requestMessage.getQueryParameters()); //Logando paramêtros query
         info("Headers: " + requestMessage.getHeaders()); // Logando headers
         info("Payload: " + requestMessage.getBody()); // Logando payload

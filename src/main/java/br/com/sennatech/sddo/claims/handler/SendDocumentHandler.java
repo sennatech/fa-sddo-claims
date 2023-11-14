@@ -29,7 +29,7 @@ public class SendDocumentHandler {
       @HttpTrigger(name = "req", methods = {
           HttpMethod.POST}, authLevel = AuthorizationLevel.ANONYMOUS, route = "documents") HttpRequestMessage<String> request,
       @EventHubOutput(name = "event", eventHubName = Config.EVENT_HUB_NAME, connection = Config.CONN_STRING) OutputBinding<EventDTO> outputItem,
-      final ExecutionContext context) throws InterruptedException {
+      final ExecutionContext context) {
 
     LoggerUtil logger = LoggerUtil.create(context, request);
     logger.logReq();
@@ -37,7 +37,7 @@ public class SendDocumentHandler {
     try {
       var documentDTO = mapper.readValue(request.getBody(), DocumentDTO.class);
       service.create(documentDTO);
-      outputItem.setValue(EventDTO.create(context, request.getBody()));
+      outputItem.setValue(EventDTO.create(context, documentDTO));
       return request.createResponseBuilder(HttpStatus.ACCEPTED).build();
     } catch (EntityNotFoundException e) {
       logger.logError(e);

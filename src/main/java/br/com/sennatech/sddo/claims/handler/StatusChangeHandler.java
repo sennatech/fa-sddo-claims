@@ -25,14 +25,14 @@ public class StatusChangeHandler {
           HttpMethod.PUT }, authLevel = AuthorizationLevel.ANONYMOUS, route = "status/{claimId}") HttpRequestMessage<StatusUpdateDTO> request,
       @BindingName("claimId") String claimId,
       @EventHubOutput(name = "event", eventHubName = Config.EVENT_HUB_NAME, connection = Config.CONN_STRING) OutputBinding<EventDTO> outputItem,
-      final ExecutionContext context) throws InterruptedException {
+      final ExecutionContext context) {
 
     LoggerUtil logger = LoggerUtil.create(context, request);
     logger.logReq();
 
     try {
-      service.updateStatus(claimId, request.getBody().getStatus());
-      outputItem.setValue(EventDTO.create(context, claimId + " updated to " + request.getBody().getStatus()));
+      var claim = service.updateStatus(claimId, request.getBody().getStatus());
+      outputItem.setValue(EventDTO.create(context, claim));
       return request.createResponseBuilder(HttpStatus.ACCEPTED).build();
     } catch (EntityNotFoundException e) {
       logger.logError(e);

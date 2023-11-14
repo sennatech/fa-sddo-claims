@@ -55,13 +55,14 @@ public class ClaimService {
         var customer = customerService.retrieveFromDocumentNumber(claim.getInsuredDocument());
         return claimToClaimDetailsDTO.apply(claim, coverage, notifier, insuredAddress, customer);
     }
-    
-    public void updateStatus(String claimId, Status newStatus) {
+
+    public Claim updateStatus(String claimId, Status newStatus) {
         if (newStatus.equals(Status.PENDENTE))
             throw new IllegalArgumentException("Can't set an already created status to pending");
         var claim = retrieveFromId(TransformationUtil.claimIdToLong(claimId));
         claim.setStatus(newStatus);
         claimRepository.save(claim);
+        return claim;
     }
 
     public List<ClaimListDTO> list(Map<String, String> queryParameters) throws IllegalArgumentException {
