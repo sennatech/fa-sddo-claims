@@ -10,7 +10,6 @@ import br.com.sennatech.sddo.claims.config.Config;
 import br.com.sennatech.sddo.claims.domain.dto.ClaimDTO;
 import br.com.sennatech.sddo.claims.domain.dto.event.EventDTO;
 import br.com.sennatech.sddo.claims.domain.dto.util.ResponseDTO;
-import br.com.sennatech.sddo.claims.domain.entity.Claim;
 import br.com.sennatech.sddo.claims.service.ClaimService;
 import br.com.sennatech.sddo.claims.util.LoggerUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -35,8 +34,8 @@ public class NotificationHandler {
 
     try {
       ClaimDTO claimDTO = mapper.readValue(request.getBody(), ClaimDTO.class);
-      Claim claim = service.create(claimDTO);
-      String event = mapper.writeValueAsString(EventDTO.create(context, claim));
+      service.create(claimDTO);
+      String event = mapper.writeValueAsString(EventDTO.create(context, claimDTO));
       outputItem.setValue(event);
       Object refusalReasons = (service.getAutoRefusalReasons().isEmpty()) ? null : service.getAutoRefusalReasons();
       if (refusalReasons != null)
