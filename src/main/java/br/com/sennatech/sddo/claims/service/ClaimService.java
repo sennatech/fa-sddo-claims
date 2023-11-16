@@ -39,13 +39,14 @@ public class ClaimService {
         return autoRefusalReasons;
     }
 
-    public void create(ClaimDTO claimDTO) {
+    public Claim create(ClaimDTO claimDTO) {
         Claim claim = claimDTOtoClaim.apply(claimDTO);
         Notifier notifier = notifierService.retrieveOrCreateNotifier(claim.getNotifier().getDocumentNumber(),
                 claimDTO.getNotifier());
         claim.setNotifier(notifier);
         checkConstraints(claim);
         claimRepository.saveAndFlush(claim);
+        return claim;
     }
 
     public ClaimDetailsDTO retrieveFromClaimId(String claimId) {
