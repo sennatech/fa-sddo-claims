@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "documents")
+@Table(name = "`documents`")
 @Data
 @Builder
 @AllArgsConstructor
@@ -18,7 +18,7 @@ public class Document {
     @Column(nullable = false, unique = true, updatable = false)
     private Long id;
     @Lob
-    @Column(nullable = false)
+    @Column(name = "`file`", nullable = false)
     private Byte[] file;
     @Column(nullable = false)
     private String name;

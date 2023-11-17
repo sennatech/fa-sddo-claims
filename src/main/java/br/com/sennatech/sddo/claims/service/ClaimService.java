@@ -13,6 +13,7 @@ import br.com.sennatech.sddo.claims.function.*;
 import br.com.sennatech.sddo.claims.repository.*;
 import br.com.sennatech.sddo.claims.util.TransformationUtil;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -39,13 +40,15 @@ public class ClaimService {
         return autoRefusalReasons;
     }
 
-    public void create(ClaimDTO claimDTO) {
+    @Transactional
+    public Claim create(ClaimDTO claimDTO) {
         Claim claim = claimDTOtoClaim.apply(claimDTO);
         Notifier notifier = notifierService.retrieveOrCreateNotifier(claim.getNotifier().getDocumentNumber(),
                 claimDTO.getNotifier());
         claim.setNotifier(notifier);
         checkConstraints(claim);
         claimRepository.saveAndFlush(claim);
+        return claim;
     }
 
     public ClaimDetailsDTO retrieveFromClaimId(String claimId) {
