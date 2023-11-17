@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 public class DocumentDTO {
     private Long id;
-    private Byte[] file;
+    private String file;
     private String name;
     private String claimId;
 }

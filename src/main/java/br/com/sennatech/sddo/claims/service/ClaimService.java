@@ -29,6 +29,7 @@ public class ClaimService {
     private final CustomerService customerService;
 
     //converters
+    private final ClaimToEventClaimDTO claimToEventClaimDTO;
     private final ClaimToClaimListDTO claimToClaimListDTO;
     private final ClaimDTOtoClaim claimDTOtoClaim;
     private final ClaimToClaimDetailsDTO claimToClaimDetailsDTO;
@@ -41,14 +42,14 @@ public class ClaimService {
     }
 
     @Transactional
-    public Claim create(ClaimDTO claimDTO) {
+    public EventClaimDTO create(ClaimDTO claimDTO) {
         Claim claim = claimDTOtoClaim.apply(claimDTO);
         Notifier notifier = notifierService.retrieveOrCreateNotifier(claim.getNotifier().getDocumentNumber(),
                 claimDTO.getNotifier());
         claim.setNotifier(notifier);
         checkConstraints(claim);
         claimRepository.saveAndFlush(claim);
-        return claim;
+        return claimToEventClaimDTO.apply(claim);
     }
 
     public ClaimDetailsDTO retrieveFromClaimId(String claimId) {

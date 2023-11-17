@@ -19,7 +19,7 @@ public class Document {
     private Long id;
     @Lob
     @Column(name = "`file`", nullable = false)
-    private Byte[] file;
+    private String file;
     @Column(nullable = false)
     private String name;
     @Builder.Default
