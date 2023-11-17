@@ -18,5 +18,5 @@ public class CoverageToCoverageDTO implements Function<Coverage, CoverageDTO> {
         .name(coverage.getName())
         .type(coverage.getType())
         .build();
-    }    
+    }
 }

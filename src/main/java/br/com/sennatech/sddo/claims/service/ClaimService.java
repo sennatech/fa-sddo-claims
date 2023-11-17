@@ -6,7 +6,13 @@ import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microsoft.azure.functions.ExecutionContext;
+import com.microsoft.azure.functions.OutputBinding;
+
 import br.com.sennatech.sddo.claims.domain.dto.*;
+import br.com.sennatech.sddo.claims.domain.dto.event.EventDTO;
 import br.com.sennatech.sddo.claims.domain.entity.*;
 import br.com.sennatech.sddo.claims.domain.enums.*;
 import br.com.sennatech.sddo.claims.function.*;
@@ -28,6 +34,7 @@ public class ClaimService {
     private final CustomerService customerService;
 
     //converters
+    private final ObjectMapper mapper;
     private final ClaimToClaimListDTO claimToClaimListDTO;
     private final ClaimDTOtoClaim claimDTOtoClaim;
     private final ClaimToClaimDetailsDTO claimToClaimDetailsDTO;
@@ -39,13 +46,15 @@ public class ClaimService {
         return autoRefusalReasons;
     }
 
-    public void create(ClaimDTO claimDTO) {
+    public void create(ExecutionContext context, OutputBinding<String> outputItem, ClaimDTO claimDTO) throws JsonProcessingException {
         Claim claim = claimDTOtoClaim.apply(claimDTO);
         Notifier notifier = notifierService.retrieveOrCreateNotifier(claim.getNotifier().getDocumentNumber(),
                 claimDTO.getNotifier());
         claim.setNotifier(notifier);
         checkConstraints(claim);
         claimRepository.saveAndFlush(claim);
+        String event = mapper.writeValueAsString(EventDTO.create(context, claim));
+        outputItem.setValue(event);
     }
 
     public ClaimDetailsDTO retrieveFromClaimId(String claimId) {
