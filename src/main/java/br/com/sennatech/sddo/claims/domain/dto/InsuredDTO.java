@@ -6,6 +6,8 @@ import lombok.*;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class InsuredDTO {
     private String documentNumber;
     private String name;
