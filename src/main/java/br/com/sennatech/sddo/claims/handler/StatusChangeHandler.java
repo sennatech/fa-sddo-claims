@@ -7,7 +7,7 @@ import com.microsoft.azure.functions.*;
 import com.microsoft.azure.functions.annotation.*;
 
 import br.com.sennatech.sddo.claims.config.Config;
-import br.com.sennatech.sddo.claims.domain.dto.EventClaimDTO;
+import br.com.sennatech.sddo.claims.domain.dto.EventClaimStatusDTO;
 import br.com.sennatech.sddo.claims.domain.dto.StatusUpdateDTO;
 import br.com.sennatech.sddo.claims.domain.dto.event.EventDTO;
 import br.com.sennatech.sddo.claims.domain.dto.util.ResponseDTO;
@@ -35,7 +35,7 @@ public class StatusChangeHandler {
     logger.logReq();
 
     try {
-      EventClaimDTO claim = service.updateStatus(claimId, request.getBody().getStatus());
+      EventClaimStatusDTO claim = service.updateStatus(claimId, request.getBody().getStatus());
       String event = mapper.writeValueAsString(EventDTO.create(context, claim));
       outputItem.setValue(event);
       return request.createResponseBuilder(HttpStatus.ACCEPTED).build();

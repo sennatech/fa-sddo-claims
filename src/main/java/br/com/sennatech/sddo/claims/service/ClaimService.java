@@ -22,6 +22,7 @@ public class ClaimService {
 
     // services
     private final ClaimRepository claimRepository;
+    private final CoverageRepository coverageRepository;
     private final PolicyService policyService;
     private final CoverageService coverageService;
     private final NotifierService notifierService;
@@ -33,6 +34,7 @@ public class ClaimService {
     private final ClaimToClaimListDTO claimToClaimListDTO;
     private final ClaimDTOtoClaim claimDTOtoClaim;
     private final ClaimToClaimDetailsDTO claimToClaimDetailsDTO;
+    private final ClaimToEventClaimStatusDTO claimToEventClaimStatusDTO;
 
     // util
     private final List<String> autoRefusalReasons = new ArrayList<>();
@@ -62,7 +64,7 @@ public class ClaimService {
         return claimToClaimDetailsDTO.apply(claim, coverage, notifier, insuredAddress, customer);
     }
 
-    public EventClaimDTO updateStatus(String claimId, Status newStatus) {
+    public EventClaimStatusDTO updateStatus(String claimId, Status newStatus) {
         long id = TransformationUtil.claimIdToLong(claimId);
         Claim claim = retrieveFromId(id);
         if (claim.getStatus() == newStatus) {
@@ -73,7 +75,8 @@ public class ClaimService {
         }
         claim.setStatus(newStatus);
         claimRepository.save(claim);
-        return claimToEventClaimDTO.apply(claim);
+        Coverage coverage = coverageRepository.getReferenceById(claim.getCoverageCode());
+        return claimToEventClaimStatusDTO.apply(claim, coverage.getSumInsured());
     }
 
     public List<ClaimListDTO> list(Map<String, String> queryParameters) throws IllegalArgumentException {
