@@ -75,7 +75,8 @@ public class ClaimService {
         }
         claim.setStatus(newStatus);
         claimRepository.save(claim);
-        Coverage coverage = coverageRepository.getReferenceById(claim.getCoverageCode());
+        Coverage coverage = coverageRepository.findById(claim.getCoverageCode())
+                .orElseThrow(() -> new EntityNotFoundException("Coverage not found"));
         return claimToEventClaimStatusDTO.apply(claim, coverage.getSumInsured());
     }
 
