@@ -7,10 +7,10 @@ import com.microsoft.azure.functions.*;
 import com.microsoft.azure.functions.annotation.*;
 
 import br.com.sennatech.sddo.claims.config.Config;
+import br.com.sennatech.sddo.claims.domain.dto.EventClaimDTO;
 import br.com.sennatech.sddo.claims.domain.dto.StatusUpdateDTO;
 import br.com.sennatech.sddo.claims.domain.dto.event.EventDTO;
 import br.com.sennatech.sddo.claims.domain.dto.util.ResponseDTO;
-import br.com.sennatech.sddo.claims.domain.entity.Claim;
 import br.com.sennatech.sddo.claims.service.ClaimService;
 import br.com.sennatech.sddo.claims.util.LoggerUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -35,7 +35,7 @@ public class StatusChangeHandler {
     logger.logReq();
 
     try {
-      Claim claim = service.updateStatus(claimId, request.getBody().getStatus());
+      EventClaimDTO claim = service.updateStatus(claimId, request.getBody().getStatus());
       String event = mapper.writeValueAsString(EventDTO.create(context, claim));
       outputItem.setValue(event);
       return request.createResponseBuilder(HttpStatus.ACCEPTED).build();

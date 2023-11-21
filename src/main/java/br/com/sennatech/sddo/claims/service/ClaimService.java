@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ClaimService {
 
-    //services
+    // services
     private final ClaimRepository claimRepository;
     private final PolicyService policyService;
     private final CoverageService coverageService;
@@ -28,13 +28,13 @@ public class ClaimService {
     private final InsuredAddressService insuredAddressService;
     private final CustomerService customerService;
 
-    //converters
+    // converters
     private final ClaimToEventClaimDTO claimToEventClaimDTO;
     private final ClaimToClaimListDTO claimToClaimListDTO;
     private final ClaimDTOtoClaim claimDTOtoClaim;
     private final ClaimToClaimDetailsDTO claimToClaimDetailsDTO;
 
-    //util
+    // util
     private final List<String> autoRefusalReasons = new ArrayList<>();
 
     public List<String> getAutoRefusalReasons() {
@@ -62,17 +62,18 @@ public class ClaimService {
         return claimToClaimDetailsDTO.apply(claim, coverage, notifier, insuredAddress, customer);
     }
 
-    public Claim updateStatus(String claimId, Status newStatus) {
-        if (newStatus == Status.PENDENTE) {
-            throw new IllegalArgumentException("Cannot set an already created status to pending");
-        }
+    public EventClaimDTO updateStatus(String claimId, Status newStatus) {
         long id = TransformationUtil.claimIdToLong(claimId);
         Claim claim = retrieveFromId(id);
         if (claim.getStatus() == newStatus) {
             throw new IllegalArgumentException("The status is already set to the provided status");
         }
+        if (newStatus == Status.PENDENTE) {
+            throw new IllegalArgumentException("Cannot set an already created status to pending");
+        }
         claim.setStatus(newStatus);
-        return claimRepository.save(claim);
+        claimRepository.save(claim);
+        return claimToEventClaimDTO.apply(claim);
     }
 
     public List<ClaimListDTO> list(Map<String, String> queryParameters) throws IllegalArgumentException {
@@ -89,7 +90,7 @@ public class ClaimService {
             claimStream = claimStream.filter(claim -> claim.getStatus().equals(Status.fromString(status)));
         }
         return claimStream.map(claimToClaimListDTO::apply)
-                         .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     private List<Claim> retrieveClaims(Optional<String> insuredDocument, Optional<String> notifierDocument) {
