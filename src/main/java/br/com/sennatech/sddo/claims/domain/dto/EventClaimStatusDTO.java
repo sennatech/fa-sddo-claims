@@ -1,6 +1,5 @@
 package br.com.sennatech.sddo.claims.domain.dto;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -20,6 +19,7 @@ public class EventClaimStatusDTO {
   private LocalDate date;
   private String description;
   private Type type;
+  private String notificationType;
   private NotifierDTO notifier;
   private Status status;
   private Double paidAmount;

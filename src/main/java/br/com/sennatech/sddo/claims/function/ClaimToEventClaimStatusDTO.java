@@ -13,10 +13,11 @@ public class ClaimToEventClaimStatusDTO {
     private final NotifierToNotifierDTO notifierToNotifierDTO;
     private final NotificationAddressToNotificationAdressDTO notificationAddressToNotificationAdressDTO;
 
-    public EventClaimStatusDTO apply(Claim claim, Double paidAmount) {
+    public EventClaimStatusDTO apply(Claim claim, Double paidAmount, String notificationType) {
         return EventClaimStatusDTO.builder()
         .coverageCode(claim.getCoverageCode())
                 .date(claim.getDate())
+        .notificationType(notificationType)
         .paidAmount(paidAmount)
         .description(claim.getDescription())
         .insuredDocument(claim.getInsuredDocument())

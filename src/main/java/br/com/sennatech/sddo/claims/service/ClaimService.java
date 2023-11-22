@@ -77,7 +77,7 @@ public class ClaimService {
         claimRepository.save(claim);
         Coverage coverage = coverageRepository.findById(claim.getCoverageCode())
                 .orElseThrow(() -> new EntityNotFoundException("Coverage not found"));
-        return claimToEventClaimStatusDTO.apply(claim, coverage.getSumInsured());
+        return claimToEventClaimStatusDTO.apply(claim, coverage.getSumInsured(), coverage.getName());
     }
 
     public List<ClaimListDTO> list(Map<String, String> queryParameters) throws IllegalArgumentException {
