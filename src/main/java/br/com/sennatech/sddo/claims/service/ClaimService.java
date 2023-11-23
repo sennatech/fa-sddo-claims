@@ -28,6 +28,7 @@ public class ClaimService {
     private final NotifierService notifierService;
     private final InsuredAddressService insuredAddressService;
     private final CustomerService customerService;
+    private final InsuredCoverageService insuredCoverageService;
 
     // converters
     private final ClaimToEventClaimDTO claimToEventClaimDTO;
@@ -58,7 +59,8 @@ public class ClaimService {
         Claim claim = retrieveFromId(TransformationUtil.claimIdToLong(claimId));
         Policy policy = policyService.retrieveFromNumber(claim.getPolicy());
         InsuredAddress insuredAddress = insuredAddressService.retrieveFromPolicy(policy);
-        Coverage coverage = coverageService.retrieveFromCode(claim.getCoverageCode());
+        InsuredCoverage insuredCoverage = insuredCoverageService.retrieveFromCode(claim.getCoverageCode());
+        Coverage coverage = coverageService.retrieveFromCode(insuredCoverage.getCoverageId());
         Notifier notifier = claim.getNotifier();
         Customer customer = customerService.retrieveFromDocumentNumber(claim.getInsuredDocument());
         return claimToClaimDetailsDTO.apply(claim, coverage, notifier, insuredAddress, customer);
