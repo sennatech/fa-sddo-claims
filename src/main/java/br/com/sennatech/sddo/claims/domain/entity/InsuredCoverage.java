@@ -22,5 +22,5 @@ public class InsuredCoverage {
   private Long coverageId;
 
   @Column(nullable = false)
-  private Double hiredValue;
+  private Double hiredAmount;
 }
