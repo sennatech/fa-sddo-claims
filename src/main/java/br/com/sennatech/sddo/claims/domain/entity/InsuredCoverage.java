@@ -4,12 +4,12 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "insured_coverage")
+@Table(name = "hired_coverages")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class InsuredCoverage {
-  
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(unique = true, updatable = false, nullable = false)
