@@ -22,7 +22,6 @@ public class ClaimService {
 
     // services
     private final ClaimRepository claimRepository;
-    private final CoverageRepository coverageRepository;
     private final PolicyService policyService;
     private final CoverageService coverageService;
     private final NotifierService notifierService;
@@ -49,10 +48,12 @@ public class ClaimService {
         Claim claim = claimDTOtoClaim.apply(claimDTO);
         Notifier notifier = notifierService.retrieveOrCreateNotifier(claim.getNotifier().getDocumentNumber(),
                 claimDTO.getNotifier());
+        InsuredCoverage insuredCoverage = insuredCoverageService.retrieveFromCode(claim.getCoverageCode());
+        Coverage coverage = coverageService.retrieveFromCode(insuredCoverage.getCoverageId());
         claim.setNotifier(notifier);
         checkConstraints(claim);
         claimRepository.saveAndFlush(claim);
-        return claimToEventClaimDTO.apply(claim);
+        return claimToEventClaimDTO.apply(claim, coverage.getName());
     }
 
     public ClaimDetailsDTO retrieveFromClaimId(String claimId) {

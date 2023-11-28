@@ -13,7 +13,7 @@ public class ClaimToEventClaimDTO {
     private final NotifierToNotifierDTO notifierToNotifierDTO;
     private final NotificationAddressToNotificationAdressDTO notificationAddressToNotificationAdressDTO;
 
-    public EventClaimDTO apply(Claim claim) {
+    public EventClaimDTO apply(Claim claim, String notificationType) {
         return EventClaimDTO.builder()
         .coverageCode(claim.getCoverageCode())
         .date(claim.getDate())
@@ -25,7 +25,8 @@ public class ClaimToEventClaimDTO {
         .policy(claim.getPolicy())
         .id(claim.getId())
         .status(claim.getStatus())
-        .type(claim.getType())
+                .type(claim.getType())
+        .notificationType(notificationType)
         .build();
     }
 }

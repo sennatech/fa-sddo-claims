@@ -19,6 +19,7 @@ public class EventClaimDTO {
   private LocalDate date;
   private String description;
   private Type type;
+  private String notificationType;
   private NotifierDTO notifier;
   private Status status;
   private Long coverageCode;

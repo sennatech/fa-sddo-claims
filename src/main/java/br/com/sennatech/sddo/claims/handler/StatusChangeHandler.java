@@ -39,7 +39,7 @@ public class StatusChangeHandler {
       String event = mapper.writeValueAsString(EventDTO.create(context, claim));
       outputItem.setValue(event);
       return request.createResponseBuilder(HttpStatus.ACCEPTED).build();
-    } catch (EntityNotFoundException e) {
+    } catch (EntityNotFoundException | IllegalArgumentException e) {
       logger.logError(e);
       return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(ResponseDTO.create(e.getMessage())).build();
     } catch (Exception e) {
